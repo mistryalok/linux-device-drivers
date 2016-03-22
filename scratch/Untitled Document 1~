@@ -1,0 +1,58 @@
+/* a simple charactor device */
+#include <linux/module.h>
+#include <linux/moduleparam.h>
+#include <linux/init.h>
+
+#include <linux/kernel.h>       /* printk() */
+#include <linux/slab.h>         /* kmalloc() */
+#include <linux/fs.h>           /* everything... */
+#include <linux/errno.h>        /* error codes */
+#include <linux/types.h>        /* size_t */
+#include <linux/proc_fs.h>
+#include <linux/fcntl.h>        /* O_ACCMODE */
+#include <linux/seq_file.h>
+#include <linux/cdev.h>
+
+#include <asm/uaccess.h>        /* copy_*_user */
+
+//#include "scull.h"
+
+#define SCULL_MAJOR 0
+#define SCULL_NR_DEVS 1 	/* number of devices */
+#define SCULL_QUANTUM 4000
+#define SCULL_QSET    1000
+#define SCULL_P_BUFFER 4000
+
+int scull_major=SCULL_MAJOR;
+int scull_minor=SCULL_MINOR;
+
+/* Init and Exit mod */
+module_init(scull_init_module);
+module_exit(scull_cleanup_module);
+
+
+/* To initialize the module */
+int scull_init_module(void)
+{
+        int result, i;
+        dev_t dev = 0;  /* Dev_t is used to maintain Major and Minor \
+                        of the devices */
+ 	
+	/*  looking for dynamic initializeation */	
+	if (scull_major) {
+                dev = MKDEV(scull_major, scull_minor);
+                /* static allocation of device */
+                result = register_chrdev_region(dev, 1, "scull");
+        } else {
+                result = alloc_chrdev_region(&dev, scull_minor, 1,
+                                "scull");
+                scull_major = MAJOR(dev);
+        }
+        /* if the registration is failed then handle the erros. */
+        if (result < 0) {
+                printk(KERN_WARNING "scull: can't get major %d\n", scull_major);
+                return result;
+        }
+
+
+}
