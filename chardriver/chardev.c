@@ -1,8 +1,7 @@
    /*
-    AUTHOR: Zobayer Hasan
+    AUTHOR: Alok Mistry
     PROGRAM: Character Device Driver
-    DATE: Monday, 25 July 2011
-    VERSION: 1.0
+    VERSION: 2.0
     */
      
     #include <linux/kernel.h>
@@ -22,7 +21,7 @@
     #define BUFFER_SIZE 1024
      
     MODULE_LICENSE("Dual BSD/GPL");
-    MODULE_AUTHOR("Zobayer Hasan");
+    MODULE_AUTHOR("Alok Mistry");
     MODULE_DESCRIPTION("A simple character device driver.");
     MODULE_SUPPORTED_DEVICE(DEVICE_NAME);
      

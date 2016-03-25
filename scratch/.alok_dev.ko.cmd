@@ -1,0 +1,1 @@
+cmd_/home/alok/Github/linux-device-drivers/scratch/alok_dev.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/alok/Github/linux-device-drivers/scratch/alok_dev.ko /home/alok/Github/linux-device-drivers/scratch/alok_dev.o /home/alok/Github/linux-device-drivers/scratch/alok_dev.mod.o
