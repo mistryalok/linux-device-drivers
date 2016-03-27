@@ -1,1 +1,0 @@
-cmd_/home/alok/Github/linux-device-drivers/efytimes/part6/part7.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/alok/Github/linux-device-drivers/efytimes/part6/part7.ko /home/alok/Github/linux-device-drivers/efytimes/part6/part7.o /home/alok/Github/linux-device-drivers/efytimes/part6/part7.mod.o

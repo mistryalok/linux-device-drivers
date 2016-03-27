@@ -10,7 +10,7 @@ static dev_t first; // Global variable for the first device number
 static int __init ofcd_init(void) /* Constructor */
 {
     printk(KERN_INFO "Namaskar: ofcd registered");
-    if (alloc_chrdev_region(&first, 0, 3, "Shweta") < 0)
+    if (alloc_chrdev_region(&first, 0, 3, "Alok") < 0)
     {
         return -1;
     }
