@@ -1,0 +1,1 @@
+cmd_/home/alok/Github/linux-device-drivers/simplechardrv/chardev.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/alok/Github/linux-device-drivers/simplechardrv/chardev.ko /home/alok/Github/linux-device-drivers/simplechardrv/chardev.o /home/alok/Github/linux-device-drivers/simplechardrv/chardev.mod.o
