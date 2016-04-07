@@ -20,7 +20,7 @@
 //    #include <asm/system.h>
     #include <asm/uaccess.h>
      
-    #define DEVICE_NAME "chardev"
+    #define DEVICE_NAME "mydevice"
     #define CLASS_NAME "AlokMistry"
     #define BUFFER_SIZE 1024
      
@@ -42,8 +42,8 @@
     
     static struct class *driver_class=NULL;
     /* our dev init and exit modules */
-    int device_init(void);
-    void device_exit(void);
+    static int device_init(void);
+    static void device_exit(void);
     
     
     static int device_open(struct inode *, 	struct file *);
@@ -68,14 +68,14 @@
     };
 
     /* Mentioning major and minor here */     
-    static int device_major = 60;
-    static int device_opend = 0;
+    //static int device_major = 60;
+    //static int device_opend = 0;
     //static char device_buffer[BUFFER_SIZE];
     //static char *buff_rptr;
     //static char *buff_wptr;
      
-    module_param(device_major, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    MODULE_PARM_DESC(device_major, DEVICE_NAME " major number");
+//    module_param(device_major, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+ //   MODULE_PARM_DESC(device_major, DEVICE_NAME " major number");
      
     
 /*
@@ -83,8 +83,8 @@
  */
  static int __init device_init(void) /* Constructor */
 {
-      printk(KERN_INFO "Namaskar: Your device is registered");
-      if (alloc_chrdev_region(&first, 0, 1, "alok") < 0) {
+      printk(KERN_ALERT "INIT Hi, Your device is registered");
+      if (alloc_chrdev_region(&first, 0, 0, "alok") < 0) {
 	return -1;
       }
       
@@ -112,11 +112,12 @@
 
 
      
-    void device_exit() {
+  static  void device_exit() {
 	cdev_del(&c_dev);
 	device_destroy(driver_class,first);
-        unregister_chrdev(device_major, DEVICE_NAME);
-        printk(KERN_INFO "chardev: chrdev unloaded.\n");
+        class_destroy(driver_class);
+//	unregister_chrdev(device_major, DEVICE_NAME);
+        printk(KERN_ALERT "EXIT mydevice: mydevice is unloaded.\n");
     }
      
     
@@ -128,7 +129,7 @@
         //device_opend++;
        // buff_rptr = buff_wptr = device_buffer;
         //try_module_get(THIS_MODULE);
-	prink(KERN_ALERT "It seems like u have opened your device !");
+	printk(KERN_ALERT "OPEN It seems like u have opened your device !");
 	return 0;
     }
      
@@ -139,7 +140,7 @@
  static int device_release(struct inode *nd, struct file *fp) {
         //if(device_opend) device_opend--;
         //module_put(THIS_MODULE);
-	printk(KERN_ALERT "Au Revoir!");
+	printk(KERN_ALERT "cLOSE Au Revoir!");
 	return 0;
     }
      
@@ -147,25 +148,27 @@
 /*
  * Lets do some rd and wr, with device 
  */
-  static ssize_t device_read(struct file *fp, char *buff, size_t length, loff_t *offset) {
+  static ssize_t device_read(struct file *fp, char *buff, 
+			     size_t length, loff_t *offset) {
         //int bytes_read = strlen(buff_rptr);
         //if(bytes_read > length) bytes_read = length;
-        printk(KERN_ALERT "I am reading it!");
+        printk(KERN_ALERT "REAR I am reading it!");
 	copy_to_user(buff, ker_buf, currLen);
         //buff_rptr += bytes_read;
-        return currLen;
+        return 0;
     }
   
 /*
  * But first, we need to write something
  */
-    static ssize_t device_write(struct file *fp, const char *buff, size_t length, loff_t *offset) {
+    static ssize_t device_write(struct file *fp, const char *buff, 
+				size_t length, loff_t *offset) {
         //int bytes_written = BUFFER_SIZE - (buff_wptr - device_buffer);
         //if(bytes_written > length) bytes_written = length;
-        printk(KERN_ALERT "I am writing on it!");
-	copy_from_user(buff_wptr, buff, bytes_written);
+        printk(KERN_ALERT "WRITE I am writing on it!");
+	copy_from_user(ker_buf, buff, length);
         ker_buf[length]=0;
-	currlen=length;
+	currLen=length;
 	//buff_wptr += bytes_written;
         return length;
     }

@@ -1,2 +1,2 @@
-/home/alok/githum/linux-device-drivers/readwrite/rdwr.ko
-/home/alok/githum/linux-device-drivers/readwrite/rdwr.o
+/home/alok/Github/linux-device-drivers/readwrite/rdwr.ko
+/home/alok/Github/linux-device-drivers/readwrite/rdwr.o
