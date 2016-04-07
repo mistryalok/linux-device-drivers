@@ -1,7 +1,7 @@
    /*
     AUTHOR: Alok Mistry
     PROGRAM: Character Device Driver
-    VERSION: 2.0
+    VERSION: 4.0
     */
      
     #include <linux/kernel.h>
@@ -34,13 +34,19 @@
      
     /* Current len in read and write */
     static int currLen=0;
-    /* to have some memory to write and rd */
+    static char  math_operation;
+    static int operand_1=0;
+    static int operand_2=0;
+    static int result=0;
+    static int resp_ready=0;
+	/* to have some memory to write and rd */
     static char ker_buf[100];
     
     static dev_t first;
     static struct cdev c_dev;
     
     static struct class *driver_class=NULL;
+    static struct device *ourDevice;
     /* our dev init and exit modules */
     static int device_init(void);
     static void device_exit(void);
@@ -54,7 +60,12 @@
     /* defining that they are actually ! */
     module_init(device_init);
     module_exit(device_exit);
-     
+    
+    /*
+     * Define some attribuites to do something
+     */
+    //static DEVICE_ATTR(parCrtl,S_IWUSR,NULL,writeSomeAttr);
+    //static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
 
     /* 
      *	file operations that we can do with our device
@@ -78,6 +89,55 @@
  //   MODULE_PARM_DESC(device_major, DEVICE_NAME " major number");
      
     
+/*
+ *Reading the file
+ */
+
+static ssize_t readSomeAttr(struct device *dev,
+			    struct device_attribute *attr,char *buf)
+{
+  int isBusyResp=0;
+  sprintf(buf,"Busy is %d", isBusyResp);
+  return strlen(buf)+1;
+}
+
+
+
+/*
+ * Writing the attribuites
+ */
+static ssize_t writeSomeAttr(struct device *dev,struct device_attribute *attr,
+			     const char *buf,size_t count)
+{
+  printk(KERN_ALERT "we have got %d bytes",(int)count);
+  if(count>0) {
+      if(buf[0]=='=') {
+	printk(KERN_ALERT "Doing calculation");
+	resp_ready=1;
+	switch (math_operation) {
+	  case '+':
+	  {
+	    result=operand_1+operand_2;
+	    break;
+	  }
+	  case '-':
+	  {
+	    result=operand_1-operand_2;
+	    break;
+	  }
+	  default:
+	     result=0;
+	}
+	printk(KERN_ALERT "The answer is %d",result);
+      }
+  }
+  return count;
+}
+	  
+    
+static DEVICE_ATTR(parCrtl,S_IWUSR,NULL,writeSomeAttr);
+static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
+
 /*
  * Registering my device with new method
  */
@@ -107,6 +167,20 @@
 	unregister_chrdev_region(first, 1);
 	return -1;
       }
+      
+      
+      /*
+       * Lets create some attribute on /sys/class/CLASSNAME/mydevice/
+       */
+      if(device_create_file(ourDevice,&dev_attr_parCrtl)<0) {
+	printk(KERN_ALERT "Failed attr creation");
+	return -1;
+      }
+      if(device_create_file(ourDevice,&dev_attr_isBusy)<0) {
+	printk(KERN_ALERT "Failed attr creation");
+	return -1;
+      }
+      
       return 0;
 }
 
@@ -150,12 +224,18 @@
  */
   static ssize_t device_read(struct file *fp, char *buff, 
 			     size_t length, loff_t *offset) {
+      if(resp_ready) {
+	resp_ready=0;
         //int bytes_read = strlen(buff_rptr);
         //if(bytes_read > length) bytes_read = length;
         printk(KERN_ALERT "REAR I am reading it!");
-	copy_to_user(buff, ker_buf, currLen);
+	int n;
+	n=sprintf(ker_buf,"%d\n",result);
+	copy_to_user(buff, ker_buf, n);
         //buff_rptr += bytes_read;
-       return currLen;
+       return n;
+      }
+     return 0;
     }
   
 /*
@@ -167,12 +247,16 @@
         //if(bytes_written > length) bytes_written = length;
         printk(KERN_ALERT "WRITE I am writing on it!");
 	copy_from_user(ker_buf, buff, length);
-        ker_buf[length]=0;
+        sscanf(ker_buf,"%d,%d,%c",&operand_1,&operand_2,&math_operation);
+	ker_buf[length]=0;
 	currLen=length;
 	//buff_wptr += bytes_written;
         return length;
     }
      
+//static DEVICE_ATTR(parCrtl,S_IWUSR,NULL,writeSomeAttr);/
+//static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
+
     /*
     End of Source Code
     */
