@@ -84,7 +84,7 @@
  static int __init device_init(void) /* Constructor */
 {
       printk(KERN_ALERT "INIT Hi, Your device is registered");
-      if (alloc_chrdev_region(&first, 0, 0, "alok") < 0) {
+      if (alloc_chrdev_region(&first, 0, 1, "alok") < 0) {
 	return -1;
       }
       
