@@ -204,7 +204,7 @@ static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
         //device_opend++;
        // buff_rptr = buff_wptr = device_buffer;
         //try_module_get(THIS_MODULE);
-	printk(KERN_ALERT "OPEN It seems like u have opened your device !");
+	printk(KERN_ALERT "OPENED It seems like u have opened your device !");
 	return 0;
     }
      
@@ -215,7 +215,7 @@ static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
  static int device_release(struct inode *nd, struct file *fp) {
         //if(device_opend) device_opend--;
         //module_put(THIS_MODULE);
-	printk(KERN_ALERT "cLOSE Au Revoir!");
+	printk(KERN_ALERT "CLOSED Au Revoir!");
 	return 0;
     }
      
