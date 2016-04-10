@@ -126,6 +126,9 @@
     }
 	  
     
+    /*
+     * Creting files for parCrtl and isBusy
+     */
     static DEVICE_ATTR(parCrtl,S_IWUSR,NULL,writeSomeAttr);
     static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
 
@@ -178,7 +181,7 @@
 
 
      
-  static  void device_exit() {
+    static  void device_exit() {
 	cdev_del(&c_dev);
 	device_destroy(driver_class,first);
         class_destroy(driver_class);
@@ -195,7 +198,7 @@
         //device_opend++;
        // buff_rptr = buff_wptr = device_buffer;
         //try_module_get(THIS_MODULE);
-	printk(KERN_ALERT "OPENED It seems like u have opened your device !");
+	printk(KERN_ALERT "OPENED It seems like u have opened your device !\n");
 	return 0;
     }
      
@@ -206,7 +209,7 @@
  static int device_release(struct inode *nd, struct file *fp) {
         //if(device_opend) device_opend--;
         //module_put(THIS_MODULE);
-	printk(KERN_ALERT "CLOSED Au Revoir!");
+	printk(KERN_ALERT "CLOSED Au Revoir!\n");
 	return 0;
     }
      
@@ -220,9 +223,9 @@
 	resp_ready=0;
         //int bytes_read = strlen(buff_rptr);
         //if(bytes_read > length) bytes_read = length;
-        printk(KERN_ALERT "READ I am reading it!");
+        printk(KERN_ALERT "READ I am reading it!\n");
 	int n;
-	n=sprintf(ker_buf,"%d\n",result);
+	n=sprintf(ker_buf,"The results are %d\n",result);
 	copy_to_user(buff, ker_buf, n);
         //buff_rptr += bytes_read;
        return n;
@@ -237,7 +240,7 @@
 				size_t length, loff_t *offset) {
         //int bytes_written = BUFFER_SIZE - (buff_wptr - device_buffer);
         //if(bytes_written > length) bytes_written = length;
-        printk(KERN_ALERT "WRITE I am writing on it!");
+        printk(KERN_ALERT "WRITE I am writing on it!\n");
 	copy_from_user(ker_buf, buff, length);
         sscanf(ker_buf,"%d,%d,%c",&operand_1,&operand_2,&math_operation);
 	ker_buf[length]=0;
