@@ -44,12 +44,14 @@
     
     /* to have some memory to write and rd */
     static char ker_buf[100];
+    static char mydata[10];
     
     static dev_t first;
-    /* The chardevice struct in new way */
+    
+    /* The chardevice struct in new way using CDev struct*/
     static struct cdev c_dev;
     
-    /* Creating some class  */
+    /* Creating some class and device  */
     static struct class *driver_class=NULL;
     static struct device *ourDevice;
     
@@ -126,11 +128,24 @@
     }
 	  
     
+    
+    /*
+     * My custom attribute for fun
+     */
+    static ssize_t writeme(struct device *dev,
+				struct device_attribute *attr,
+				const char *buf,size_t count)
+    {
+      printk(KERN_ALERT "Some one is writing on writeMe and it is -%c",buf[0]);
+      return count;
+    }
+    
     /*
      * Creting files for parCrtl and isBusy
      */
     static DEVICE_ATTR(parCrtl,S_IWUSR,NULL,writeSomeAttr);
     static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
+    static DEVICE_ATTR(mywrite,S_IWUSR,NULL,writeme);
 
     /*
     * Registering my device with new method, kind of constructor
@@ -172,6 +187,14 @@
 	    return -1;
 	  }
 	  if(device_create_file(ourDevice,&dev_attr_isBusy)<0) {
+	    printk(KERN_ALERT "Failed attr creation");
+	    return -1;
+	  }
+	  
+	  /* 
+	   * creating my own attribute for fun
+	   */
+	  if(device_create_file(ourDevice,&dev_attr_mywrite)<0) {
 	    printk(KERN_ALERT "Failed attr creation");
 	    return -1;
 	  }
