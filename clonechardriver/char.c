@@ -248,10 +248,11 @@
         //if(bytes_read > length) bytes_read = length;
         printk(KERN_ALERT "READ I am reading it!\n");
 	int n;
-	n=sprintf(ker_buf,"The results are %d\n",result);
-	copy_to_user(buff, ker_buf, n);
+	//n=sprintf(ker_buf,"The results are %d\n",result);
+	copy_to_user(buff, ker_buf, 10);
+	
         //buff_rptr += bytes_read;
-       return n;
+       return 10;
       }
      return 0;
     }
@@ -265,9 +266,10 @@
         //if(bytes_written > length) bytes_written = length;
         printk(KERN_ALERT "WRITE I am writing on it!\n");
 	copy_from_user(ker_buf, buff, length);
-        sscanf(ker_buf,"%d,%d,%c",&operand_1,&operand_2,&math_operation);
+        //sscanf(ker_buf,"%d,%d,%c",&operand_1,&operand_2,&math_operation);
 	ker_buf[length]=0;
-	currLen=length;
+	resp_ready=1;
+	//currLen=length;
 	//buff_wptr += bytes_written;
         return length;
     }
