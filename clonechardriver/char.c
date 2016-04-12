@@ -84,69 +84,12 @@
     *Reading the file
     */
 
-    static ssize_t readSomeAttr(struct device *dev,
-				struct device_attribute *attr,char *buf)
-    {
-      int isBusyResp=0;
-      sprintf(buf,"Busy is %d", isBusyResp);
-      return strlen(buf)+1;
-    }
-
-
-
-    /*
-    * Writing the attribuites
-    */
-    static ssize_t writeSomeAttr(struct device *dev,
-				struct device_attribute *attr,
-				const char *buf,size_t count)
-    {
-      printk(KERN_ALERT "we have got %d bytes",(int)count);
-      if(count>0) {
-	  if(buf[0]=='=') {
-	    printk(KERN_ALERT "Doing calculation");
-	    resp_ready=1;
-	    switch (math_operation) {
-	      case '+':
-	      {
-		result=operand_1+operand_2;
-		break;
-	      }
-	      case '-':
-	      {
-		result=operand_1-operand_2;
-		break;
-	      }
-	      default:
-		result=0;
-	    }
-	    printk(KERN_ALERT "The answer is %d",result);
-	  }
-      }
-      printk(KERN_ALERT "We have got %d and %d",buf[0],buf[1]);
-      return count;
-    }
+    
 	  
     
     
-    /*
-     * My custom attribute for fun
-     */
-    static ssize_t writeme(struct device *dev,
-				struct device_attribute *attr,
-				const char *buf,size_t count)
-    {
-      printk(KERN_ALERT "Some one is writing on writeMe and it is -%c",buf[0]);
-      return count;
-    }
     
-    /*
-     * Creting files for parCrtl and isBusy
-     */
-    static DEVICE_ATTR(parCrtl,S_IWUSR,NULL,writeSomeAttr);
-    static DEVICE_ATTR(isBusy,S_IRUGO,readSomeAttr,NULL);
-    static DEVICE_ATTR(mywrite,S_IWUSR,NULL,writeme);
-
+   
     /*
     * Registering my device with new method, kind of constructor
     */
@@ -179,25 +122,7 @@
 	  }
 	  
 	  
-	  /*
-	  * Lets create some attribute on /sys/class/CLASSNAME/mydevice/
-	  */
-	  if(device_create_file(ourDevice,&dev_attr_parCrtl)<0) {
-	    printk(KERN_ALERT "Failed attr creation");
-	    return -1;
-	  }
-	  if(device_create_file(ourDevice,&dev_attr_isBusy)<0) {
-	    printk(KERN_ALERT "Failed attr creation");
-	    return -1;
-	  }
 	  
-	  /* 
-	   * creating my own attribute for fun
-	   */
-	  if(device_create_file(ourDevice,&dev_attr_mywrite)<0) {
-	    printk(KERN_ALERT "Failed attr creation");
-	    return -1;
-	  }
 	  
 	  return 0;
     }
