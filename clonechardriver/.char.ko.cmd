@@ -1,1 +1,0 @@
-cmd_/home/alok/github/linux-device-drivers/clonechardriver/char.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/alok/github/linux-device-drivers/clonechardriver/char.ko /home/alok/github/linux-device-drivers/clonechardriver/char.o /home/alok/github/linux-device-drivers/clonechardriver/char.mod.o
